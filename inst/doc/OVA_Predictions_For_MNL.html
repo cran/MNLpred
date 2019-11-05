@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Manuel Neumann" />
+
+
+<title>Observed Value Predictions for Multinomial Logit Models</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#header {
+text-align: center;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Observed Value Predictions for Multinomial Logit Models</h1>
+<h4 class="author">Manuel Neumann</h4>
+
+
+
+<p>This package provides functions that make it easy to get plottable predictions from multinomial logit models. The predictions are based on simulated draws of regression estimates from their respective sampling distribution.</p>
+<p>At first I will present the theoretical and statistical background, before using sample data to demonstrate the functions of the package.</p>
+<div id="the-multinomial-logit-model" class="section level2">
+<h2>The multinomial logit model</h2>
+<p>This is a short introduction in the theoretical and statistical background of the multinomial logit.</p>
+<p>Dependent variables can not necessarily be ordered. In political science, for example, the variable of interest is often the individual’s vote choice, based on the set of parties that are presented. Of interest is then how somebody comes up with their choice.</p>
+<p>More generally spoken, many questions deal with a nominal outcome variable and we want to test assumptions about the function that may lead to a respective outcome.</p>
+<p>For these questions, the multinomial logit model is often a fitting option. Similar to an ordinary logit model, the multinomial logit model assumes that the probability to choose one over the other outcomes can be modeled with a linear function and a fitting logit link function. The difference of the multinomial logit is that it models the choice of <em>each</em> category as a function of the characteristics of the observation.</p>
+<p>In formal terms, we assume <span class="math display">\[\Pr(y_i = j|X_i)\]</span> is a linear combination of <span class="math display">\[X_i\beta_j\]</span>, whereby <span class="math display">\[\beta_j\]</span> is a choice specific vector. This means we are interested in the probability that the observed choice of the individual <span class="math display">\[y_i\]</span> is the choice category <span class="math display">\[j\]</span> dependent on characteristics of the observation’s characteristics <span class="math display">\[X_i\]</span>. Therefore we estimate a choice specific vector <span class="math inline">\(\beta_j\)</span>. Since the probability is restricted to be between <span class="math display">\[0\]</span> and <span class="math display">\[1\]</span>, we use <span class="math display">\[exp(X_i\beta_j)\]</span> as a fitting link function. Additionally, we bring the exponents into relationship with each other and normalize them by dividing through the sum of them.</p>
+<p>Since we cannot compare all choices against each other, the model is not identified so far. Instead, we have to choose a baseline category and fix it to <span class="math display">\[0\]</span>. Therefore we estimate the probability of all choices to be chosen in comparison to the baseline choice.</p>
+<p>Eventually, we end up with the following probability function:</p>
+<p><span class="math display">\[\Pr(y_i|X_i)= \frac{exp(X_i\beta_j)}{\sum^{J}_{m=1}exp(X_i \beta_m)}\]</span>, whereby <span class="math display">\[\beta_1 = 0\]</span> This is the link function that is used for estimation.</p>
+<p>For a more detailed insight into the multinomial model refer to sources like <a href="https://data.princeton.edu/wws509/notes/c6s2">these lecture notes by Germán Rodríguez</a>.</p>
+</div>
+<div id="using-the-package" class="section level2">
+<h2>Using the package</h2>
+<div id="how-does-the-function-work" class="section level3">
+<h3>How does the function work?</h3>
+<p>As we have seen above, the multinomial logit can be used to get an insight into the probabilities to choose one option out of a set of alternatives. We have also seen that we need a baseline category to identify the model. This is mathematically necessary, but does not come in handy for purposes of interpretation.</p>
+<p>It is far more helpful and easier to understand to come up with predicted probabilities and first differences for values of interest <span class="citation">(see e.g., King, Tomz, and Wittenberg 2000 for approaches in social sciences)</span>. Based on simulations, this package helps to easily predict probabilities and confidence intervals for each choice category over a specified scenario (so far: the observed values).</p>
+<p>The procedure follows the following steps:</p>
+<ol style="list-style-type: decimal">
+<li>Estimate a multinomial model and save the coefficients and the variance covariance matrix (based on the Hessian-matrix of the model).</li>
+<li>To simulate uncertainty, make <span class="math inline">\(n\)</span> draws of coefficients from a simulated sampling distribution based on the coefficients and the variance covariance matrix.</li>
+<li>Predict probabilities by multiplying the drawn coefficients with a specified scenario (so far these are the observed values).</li>
+<li>Take the mean and the quantiles of the simulated predicted probabilities.</li>
+</ol>
+<p>The presented functions follow these steps. Additionally, they use the so called observed value approach. This means that the “scenario” uses all observed values that informed the model. Therefore the function takes these more detailed steps:</p>
+<ol style="list-style-type: decimal">
+<li>For all (complete) cases <span class="math inline">\(n\)</span> predictions are computed based on their observed independent values and the <span class="math inline">\(n\)</span> sets of coefficients.</li>
+<li>Next the predicted values of all observations for each simulation are averaged.</li>
+<li>Take the mean and the quantiles of the simulated predicted probabilities (same as above).</li>
+</ol>
+<p>For first differences, the simulated predictions are subtracted from each other.</p>
+<p>To showcase these steps, I present a reproducible example of how the functions can be used.</p>
+</div>
+<div id="example" class="section level3">
+<h3>Example</h3>
+<p>The example is based on <a href="https://stats.idre.ucla.edu/r/dae/multinomial-logistic-regression/">this UCLA R data analysis example</a>.</p>
+<p>The data is an example dataset, including the career choice of 200 high school students and their respective performance indicators. We want to predict the probability of the students to choose either an academic, general, or vocational program.</p>
+<p>For this task, we need the following packages:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="co"># Reading data</span></a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="kw">library</span>(foreign)</a>
+<a class="sourceLine" id="cb1-3" title="3"></a>
+<a class="sourceLine" id="cb1-4" title="4"><span class="co"># Required packages</span></a>
+<a class="sourceLine" id="cb1-5" title="5"><span class="kw">library</span>(magrittr) <span class="co"># for pipes</span></a>
+<a class="sourceLine" id="cb1-6" title="6"><span class="kw">library</span>(nnet) <span class="co"># for the multinom()-function</span></a>
+<a class="sourceLine" id="cb1-7" title="7"><span class="kw">library</span>(MASS) <span class="co"># for the multivariate normal distribution</span></a>
+<a class="sourceLine" id="cb1-8" title="8"></a>
+<a class="sourceLine" id="cb1-9" title="9"><span class="co"># The package</span></a>
+<a class="sourceLine" id="cb1-10" title="10"><span class="co"># devtools::install_github(&quot;ManuelNeumann/MNLpred&quot;)</span></a>
+<a class="sourceLine" id="cb1-11" title="11"><span class="kw">library</span>(MNLpred)</a>
+<a class="sourceLine" id="cb1-12" title="12"></a>
+<a class="sourceLine" id="cb1-13" title="13"><span class="co"># Plotting the predicted probabilities:</span></a>
+<a class="sourceLine" id="cb1-14" title="14"><span class="kw">library</span>(ggplot2)</a>
+<a class="sourceLine" id="cb1-15" title="15"><span class="kw">library</span>(scales)</a></code></pre></div>
+<p>Now we load the data:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="co"># The data:</span></a>
+<a class="sourceLine" id="cb2-2" title="2">ml &lt;-<span class="st"> </span><span class="kw">read.dta</span>(<span class="st">&quot;https://stats.idre.ucla.edu/stat/data/hsbdemo.dta&quot;</span>)</a></code></pre></div>
+<p>As we have seen above, we need a baseline or reference category for the model to work. With the function <code>relevel()</code> we set the category <code>&quot;academic&quot;</code> as the baseline. Additionally, we compute a numeric dummy for the gender variable to include it in the model.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="co"># Data preparation:</span></a>
+<a class="sourceLine" id="cb3-2" title="2"></a>
+<a class="sourceLine" id="cb3-3" title="3"><span class="co"># Set &quot;academic&quot; as the reference category for the multinomial model</span></a>
+<a class="sourceLine" id="cb3-4" title="4">ml<span class="op">$</span>prog2 &lt;-<span class="st"> </span><span class="kw">relevel</span>(ml<span class="op">$</span>prog, <span class="dt">ref =</span> <span class="st">&quot;academic&quot;</span>)</a>
+<a class="sourceLine" id="cb3-5" title="5"></a>
+<a class="sourceLine" id="cb3-6" title="6"><span class="co"># Computing a numeric dummy for &quot;female&quot; (= 1)</span></a>
+<a class="sourceLine" id="cb3-7" title="7">ml<span class="op">$</span>female2 &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(ml<span class="op">$</span>female <span class="op">==</span><span class="st"> &quot;female&quot;</span>)</a></code></pre></div>
+<p>The next step is to compute the actual model. The function of the <code>MNLpred</code> package is based on models that were estimated with the <code>multinom()</code>-function of the <code>nnet</code> package. The <code>multinom()</code> function is convenient because it does not need transformed datasets. The syntax is very easy and resembles the ordinary regression functions. Important is that the Hessian matrix is returned with <code>Hess = TRUE</code>. The matrix is needed to simulate the sampling distribution.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="co"># Multinomial logit model:</span></a>
+<a class="sourceLine" id="cb4-2" title="2">mod1 &lt;-<span class="st"> </span><span class="kw">multinom</span>(prog2 <span class="op">~</span><span class="st"> </span>female2 <span class="op">+</span><span class="st"> </span>read <span class="op">+</span><span class="st"> </span>write <span class="op">+</span><span class="st"> </span>math <span class="op">+</span><span class="st"> </span>science,</a>
+<a class="sourceLine" id="cb4-3" title="3">                 <span class="dt">Hess =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb4-4" title="4">                 <span class="dt">data =</span> ml)</a>
+<a class="sourceLine" id="cb4-5" title="5"><span class="co">#&gt; # weights:  21 (12 variable)</span></a>
+<a class="sourceLine" id="cb4-6" title="6"><span class="co">#&gt; initial  value 219.722458 </span></a>
+<a class="sourceLine" id="cb4-7" title="7"><span class="co">#&gt; iter  10 value 189.686272</span></a>
+<a class="sourceLine" id="cb4-8" title="8"><span class="co">#&gt; final  value 168.079235 </span></a>
+<a class="sourceLine" id="cb4-9" title="9"><span class="co">#&gt; converged</span></a></code></pre></div>
+<p>The results show the coefficients and standard errors. As we can see, there are two sets of coefficients. They describe the relationship between the reference category and the choices <code>general</code> and <code>vocation</code>.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">summary</span>(mod1)</a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="co">#&gt; Call:</span></a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="co">#&gt; multinom(formula = prog2 ~ female2 + read + write + math + science, </span></a>
+<a class="sourceLine" id="cb5-4" title="4"><span class="co">#&gt;     data = ml, Hess = TRUE)</span></a>
+<a class="sourceLine" id="cb5-5" title="5"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb5-6" title="6"><span class="co">#&gt; Coefficients:</span></a>
+<a class="sourceLine" id="cb5-7" title="7"><span class="co">#&gt;          (Intercept)   female2        read       write        math</span></a>
+<a class="sourceLine" id="cb5-8" title="8"><span class="co">#&gt; general     4.314585 0.2180419 -0.05466370 -0.03863058 -0.09931014</span></a>
+<a class="sourceLine" id="cb5-9" title="9"><span class="co">#&gt; vocation    8.592285 0.3618313 -0.05535549 -0.07165604 -0.12226602</span></a>
+<a class="sourceLine" id="cb5-10" title="10"><span class="co">#&gt;             science</span></a>
+<a class="sourceLine" id="cb5-11" title="11"><span class="co">#&gt; general  0.09386869</span></a>
+<a class="sourceLine" id="cb5-12" title="12"><span class="co">#&gt; vocation 0.06388337</span></a>
+<a class="sourceLine" id="cb5-13" title="13"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb5-14" title="14"><span class="co">#&gt; Std. Errors:</span></a>
+<a class="sourceLine" id="cb5-15" title="15"><span class="co">#&gt;          (Intercept)   female2       read      write       math    science</span></a>
+<a class="sourceLine" id="cb5-16" title="16"><span class="co">#&gt; general     1.444954 0.4368366 0.02816753 0.03088249 0.03307516 0.03007196</span></a>
+<a class="sourceLine" id="cb5-17" title="17"><span class="co">#&gt; vocation    1.553752 0.4595495 0.03060286 0.03142334 0.03598240 0.03020753</span></a>
+<a class="sourceLine" id="cb5-18" title="18"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb5-19" title="19"><span class="co">#&gt; Residual Deviance: 336.1585 </span></a>
+<a class="sourceLine" id="cb5-20" title="20"><span class="co">#&gt; AIC: 360.1585</span></a></code></pre></div>
+<p>A first rough review of the coefficients shows that higher math scores lead to a lower probability of the students to choose a general or vocational track. It is hard to evaluate whether the effect is statistically significant and how the probabilities for each choice look like. For this it is helpful to predict the probabilities for certain scenarios and plot the means and confidence intervals for visual analysis.</p>
+<p>Let’s say we are interested in the relationship between the math scores and the probability to choose one or the other type of track. It would be helpful to plot the predicted probabilities for the span of the math scores.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">summary</span>(ml<span class="op">$</span>math)</a>
+<a class="sourceLine" id="cb6-2" title="2"><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span></a>
+<a class="sourceLine" id="cb6-3" title="3"><span class="co">#&gt;   33.00   45.00   52.00   52.65   59.00   75.00</span></a></code></pre></div>
+<p>As we can see, the math scores range from 33 to 75. Let’s pick this score as the x-variable (<code>xvari</code>) and use the <code>mnl_pred_ova()</code> function to get predicted probabilities for each math score in this range.</p>
+<p>The function needs a multinomial logit model (<code>model</code>), data (<code>data</code>), the variable of interest <code>xvari</code>, the steps for which the probabilities should be predicted (<code>by</code>). Additionally, a <code>seed</code> can be defined for replication purposes, the numbers of simulations can be defined (<code>nsim</code>), and the confidence intervals (<code>probs</code>).</p>
+<p>If we want to hold another variable stable, we can specify so with <code>scennname</code>and <code>scenvalue</code>. See also the <code>mnl_fd_ova()</code> function below.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1">pred1 &lt;-<span class="st"> </span><span class="kw">mnl_pred_ova</span>(<span class="dt">model =</span> mod1,</a>
+<a class="sourceLine" id="cb7-2" title="2">                      <span class="dt">data =</span> ml,</a>
+<a class="sourceLine" id="cb7-3" title="3">                      <span class="dt">xvari =</span> <span class="st">&quot;math&quot;</span>,</a>
+<a class="sourceLine" id="cb7-4" title="4">                      <span class="dt">by =</span> <span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb7-5" title="5">                      <span class="dt">seed =</span> <span class="st">&quot;random&quot;</span>, <span class="co"># default</span></a>
+<a class="sourceLine" id="cb7-6" title="6">                      <span class="dt">nsim =</span> <span class="dv">100</span>, <span class="co"># faster than the default 1000</span></a>
+<a class="sourceLine" id="cb7-7" title="7">                      <span class="dt">probs =</span> <span class="kw">c</span>(<span class="fl">0.025</span>, <span class="fl">0.975</span>)) <span class="co"># default</span></a></code></pre></div>
+<p>The function returns a list with several elements. Most importantly, it returns a <code>plotdata</code> data set:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">pred1<span class="op">$</span>plotdata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>()</a>
+<a class="sourceLine" id="cb8-2" title="2"><span class="co">#&gt; # A tibble: 6 x 5</span></a>
+<a class="sourceLine" id="cb8-3" title="3"><span class="co">#&gt;    math prog2     mean  lower upper</span></a>
+<a class="sourceLine" id="cb8-4" title="4"><span class="co">#&gt;   &lt;dbl&gt; &lt;fct&gt;    &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb8-5" title="5"><span class="co">#&gt; 1    33 academic 0.141 0.0391 0.305</span></a>
+<a class="sourceLine" id="cb8-6" title="6"><span class="co">#&gt; 2    34 academic 0.153 0.0463 0.315</span></a>
+<a class="sourceLine" id="cb8-7" title="7"><span class="co">#&gt; 3    35 academic 0.165 0.0550 0.325</span></a>
+<a class="sourceLine" id="cb8-8" title="8"><span class="co">#&gt; 4    36 academic 0.179 0.0656 0.338</span></a>
+<a class="sourceLine" id="cb8-9" title="9"><span class="co">#&gt; 5    37 academic 0.194 0.0780 0.352</span></a>
+<a class="sourceLine" id="cb8-10" title="10"><span class="co">#&gt; 6    38 academic 0.209 0.0924 0.366</span></a></code></pre></div>
+<p>As we can see, it includes the range of the x variable, a mean, a lower, and an upper bound of the confidence interval. Concerning the choice category, the data is in a long format. This makes it easy to plot it with the <code>ggplot</code> syntax. The choice category can now easily be used to differentiate the lines in the plot by using <code>linetype = prog2</code> in the <code>aes()</code>. Another option is to use <code>facet_wrap()</code> or <code>facet_grid()</code> to differentiate the predictions:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="kw">ggplot</span>(<span class="dt">data =</span> pred1<span class="op">$</span>plotdata, <span class="kw">aes</span>(<span class="dt">x =</span> math, <span class="dt">y =</span> mean,</a>
+<a class="sourceLine" id="cb9-2" title="2">                                  <span class="dt">ymin =</span> lower, <span class="dt">ymax =</span> upper)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-3" title="3"><span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="dt">alpha =</span> <span class="fl">0.1</span>) <span class="op">+</span><span class="st"> </span><span class="co"># Confidence intervals</span></a>
+<a class="sourceLine" id="cb9-4" title="4"><span class="st">  </span><span class="kw">geom_line</span>() <span class="op">+</span><span class="st"> </span><span class="co"># Mean</span></a>
+<a class="sourceLine" id="cb9-5" title="5"><span class="st">  </span><span class="kw">facet_grid</span>(prog2 <span class="op">~</span>., <span class="dt">scales =</span> <span class="st">&quot;free_y&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-6" title="6"><span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="dt">labels =</span> <span class="kw">percent_format</span>(<span class="dt">accuracy =</span> <span class="dv">1</span>)) <span class="op">+</span><span class="st"> </span><span class="co"># % labels</span></a>
+<a class="sourceLine" id="cb9-7" title="7"><span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb9-8" title="8"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Predicted probabilities&quot;</span>,</a>
+<a class="sourceLine" id="cb9-9" title="9">       <span class="dt">x =</span> <span class="st">&quot;Math score&quot;</span>) <span class="co"># Always label your axes ;)</span></a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --> If we want first differences between two scenarios, we can use the function <code>mnl_fd2_ova()</code>. The function takes similar arguments as the function above, but now the values for the scenarios of interest have to be supplied. Imagine we want to know what difference it makes to have the lowest or highest <code>math</code> score. This can be done as follows:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">fdif1 &lt;-<span class="st"> </span><span class="kw">mnl_fd2_ova</span>(<span class="dt">model =</span> mod1,</a>
+<a class="sourceLine" id="cb10-2" title="2">                     <span class="dt">data =</span> ml,</a>
+<a class="sourceLine" id="cb10-3" title="3">                     <span class="dt">xvari =</span> <span class="st">&quot;math&quot;</span>,</a>
+<a class="sourceLine" id="cb10-4" title="4">                     <span class="dt">value1 =</span> <span class="kw">min</span>(ml<span class="op">$</span>math),</a>
+<a class="sourceLine" id="cb10-5" title="5">                     <span class="dt">value2 =</span> <span class="kw">max</span>(ml<span class="op">$</span>math),</a>
+<a class="sourceLine" id="cb10-6" title="6">                     <span class="dt">nsim =</span> <span class="dv">100</span>)</a></code></pre></div>
+<p>The first differences can then be depicted in a graph.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1"><span class="kw">ggplot</span>(fdif1<span class="op">$</span>plotdata_fd, <span class="kw">aes</span>(categories, <span class="dt">y =</span> mean,</a>
+<a class="sourceLine" id="cb11-2" title="2">                              <span class="dt">ymin =</span> lower, <span class="dt">max =</span> upper)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb11-3" title="3"><span class="st">  </span><span class="kw">geom_pointrange</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb11-4" title="4"><span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="dv">0</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb11-5" title="5"><span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="dt">labels =</span> <span class="kw">percent_format</span>(),</a>
+<a class="sourceLine" id="cb11-6" title="6">                     <span class="dt">name =</span> <span class="st">&quot;First difference&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb11-7" title="7"><span class="st">  </span><span class="kw">theme_bw</span>()</a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>We are often not only interested in the static difference, but the difference across a span of values, given a difference in a second variable. This is especially helpful when we look at dummy variables. For example, we could be interested in the effect of <code>female</code>. With the <code>mnl_fd_ova()</code> function, we can predict the probabilities for two scenarios and subtract them. The function returns the differences and the confidence intervals of the differences. The different scenarios can be held stable with <code>scenname</code> and the <code>scenvalues</code>. <code>scenvalues</code> takes a vector of two numeric values. These values are held stable for the variable that is named in <code>scenname</code>.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">fdif1 &lt;-<span class="st"> </span><span class="kw">mnl_fd_ova</span>(<span class="dt">model =</span> mod1,</a>
+<a class="sourceLine" id="cb12-2" title="2">                    <span class="dt">data =</span> ml,</a>
+<a class="sourceLine" id="cb12-3" title="3">                    <span class="dt">xvari =</span> <span class="st">&quot;math&quot;</span>,</a>
+<a class="sourceLine" id="cb12-4" title="4">                    <span class="dt">by =</span> <span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb12-5" title="5">                    <span class="dt">scenname =</span> <span class="st">&quot;female2&quot;</span>,</a>
+<a class="sourceLine" id="cb12-6" title="6">                    <span class="dt">scenvalues =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">1</span>),</a>
+<a class="sourceLine" id="cb12-7" title="7">                    <span class="dt">nsim =</span> <span class="dv">100</span>)</a></code></pre></div>
+<p>As before, the function returns a list, including a data set that can be used to plot the differences.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">fdif1<span class="op">$</span>plotdata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>()</a>
+<a class="sourceLine" id="cb13-2" title="2"><span class="co">#&gt; # A tibble: 6 x 6</span></a>
+<a class="sourceLine" id="cb13-3" title="3"><span class="co">#&gt;    math prog2    female2  mean  lower upper</span></a>
+<a class="sourceLine" id="cb13-4" title="4"><span class="co">#&gt;   &lt;dbl&gt; &lt;fct&gt;      &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;</span></a>
+<a class="sourceLine" id="cb13-5" title="5"><span class="co">#&gt; 1    33 academic       0 0.176 0.0488 0.332</span></a>
+<a class="sourceLine" id="cb13-6" title="6"><span class="co">#&gt; 2    34 academic       0 0.190 0.0569 0.344</span></a>
+<a class="sourceLine" id="cb13-7" title="7"><span class="co">#&gt; 3    35 academic       0 0.204 0.0661 0.355</span></a>
+<a class="sourceLine" id="cb13-8" title="8"><span class="co">#&gt; 4    36 academic       0 0.219 0.0766 0.370</span></a>
+<a class="sourceLine" id="cb13-9" title="9"><span class="co">#&gt; 5    37 academic       0 0.235 0.0886 0.385</span></a>
+<a class="sourceLine" id="cb13-10" title="10"><span class="co">#&gt; 6    38 academic       0 0.252 0.102  0.401</span></a></code></pre></div>
+<p>Since the function calls the <code>mnl_pred_ova()</code> function internally, it also returns the output of the two predictions in the list element <code>Prediction1</code> and <code>Prediction2</code>. These elements also include the plot data for both scenarios. Binding them together makes for good data to visualize the differences.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">pred_plotdat &lt;-<span class="st"> </span><span class="kw">rbind</span>(fdif1<span class="op">$</span>Prediction1<span class="op">$</span>plotdata,</a>
+<a class="sourceLine" id="cb14-2" title="2">                      fdif1<span class="op">$</span>Prediction2<span class="op">$</span>plotdata)</a>
+<a class="sourceLine" id="cb14-3" title="3"></a>
+<a class="sourceLine" id="cb14-4" title="4"><span class="kw">ggplot</span>(<span class="dt">data =</span> pred_plotdat, <span class="kw">aes</span>(<span class="dt">x =</span> math, <span class="dt">y =</span> mean,</a>
+<a class="sourceLine" id="cb14-5" title="5">                                <span class="dt">ymin =</span> lower, <span class="dt">ymax =</span> upper,</a>
+<a class="sourceLine" id="cb14-6" title="6">                                <span class="dt">linetype =</span> <span class="kw">as.factor</span>(female2))) <span class="op">+</span></a>
+<a class="sourceLine" id="cb14-7" title="7"><span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="dt">alpha =</span> <span class="fl">0.1</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb14-8" title="8"><span class="st">  </span><span class="kw">geom_line</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb14-9" title="9"><span class="st">  </span><span class="kw">facet_grid</span>(prog2 <span class="op">~</span>., <span class="dt">scales =</span> <span class="st">&quot;free_y&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb14-10" title="10"><span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="dt">labels =</span> <span class="kw">percent_format</span>(<span class="dt">accuracy =</span> <span class="dv">1</span>)) <span class="op">+</span><span class="st"> </span><span class="co"># % labels</span></a>
+<a class="sourceLine" id="cb14-11" title="11"><span class="st">  </span><span class="kw">scale_linetype_discrete</span>(<span class="dt">name =</span> <span class="st">&quot;Female&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb14-12" title="12"><span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb14-13" title="13"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Predicted probabilities&quot;</span>,</a>
+<a class="sourceLine" id="cb14-14" title="14">       <span class="dt">x =</span> <span class="st">&quot;Math score&quot;</span>) <span class="co"># Always label your axes ;)</span></a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>As we can see, the differences between <code>female</code> and not-<code>female</code> are minimal. So let’s take a look at the differences:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1"><span class="kw">ggplot</span>(<span class="dt">data =</span> fdif1<span class="op">$</span>plotdata, <span class="kw">aes</span>(<span class="dt">x =</span> math, <span class="dt">y =</span> mean,</a>
+<a class="sourceLine" id="cb15-2" title="2">                                  <span class="dt">ymin =</span> lower, <span class="dt">ymax =</span> upper)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb15-3" title="3"><span class="st">  </span><span class="kw">geom_ribbon</span>(<span class="dt">alpha =</span> <span class="fl">0.1</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb15-4" title="4"><span class="st">  </span><span class="kw">geom_line</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb15-5" title="5"><span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="dv">0</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb15-6" title="6"><span class="st">  </span><span class="kw">facet_grid</span>(prog2 <span class="op">~</span>., <span class="dt">scales =</span> <span class="st">&quot;free_y&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb15-7" title="7"><span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="dt">labels =</span> <span class="kw">percent_format</span>(<span class="dt">accuracy =</span> <span class="dv">1</span>)) <span class="op">+</span><span class="st"> </span><span class="co"># % labels</span></a>
+<a class="sourceLine" id="cb15-8" title="8"><span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb15-9" title="9"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">&quot;Predicted probabilities&quot;</span>,</a>
+<a class="sourceLine" id="cb15-10" title="10">       <span class="dt">x =</span> <span class="st">&quot;Math score&quot;</span>) <span class="co"># Always label your axes ;)</span></a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>We can see that the differences are in fact minimal and at no point statistically significant from 0.</p>
+</div>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>Multinomial logit models are important to model nominal choices. They are restricted however by being in need of a baseline category. Additionally, the log-character of the estimates makes it difficult to interpret them in meaningful ways. Predicting probabilities for all choices for scenarios, based on the observed data provides much more insight. The functions of this package provide easy to use functions that return data that can be used to plot predicted probabilities. The function uses a model from the <code>multinom()</code> function and uses the observed value approach and a supplied scenario to predict values over the range of fitting values. The functions simulate sampling distributions and therefore provide meaningful confidence intervals. <code>mnl_pred_ova()</code> can be used to predict probabilities for a certain scenario. <code>mnl_fd_ova()</code> can be used to predict probabilities for two scenarios and their first differences.</p>
+</div>
+<div id="acknowledgment" class="section level2">
+<h2>Acknowledgment</h2>
+<p>My code is inspired by the method courses in the <a href="https://www.sowi.uni-mannheim.de/en/academics/prospective-students/ma-in-political-science/">Political Science master’s program at the University of Mannheim</a>(cool place, check it out!). The skeleton of the code is based on a tutorial taught by <a href="https://www.marcel-neunhoeffer.com/">Marcel Neunhoeffer</a> and <a href="https://sebastiansternberg.github.io/">Sebastian Sternberg</a> (lecture: “Advanced Quantitative Methods” by <a href="http://methods.sowi.uni-mannheim.de/thomas_gschwend/">Thomas Gschwend</a>).</p>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2>References</h2>
+<div id="refs" class="references">
+<div id="ref-king2000">
+<p>King, Gary, Michael Tomz, and Jason Wittenberg. 2000. “Making the Most of Statistical Analyses: Improving Interpretation and Presentation.” <em>American Journal of Political Science</em> 44 (2): 341–55.</p>
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
