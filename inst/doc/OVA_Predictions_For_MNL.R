@@ -1,10 +1,10 @@
-## ---- include = FALSE----------------------------------------------------
+## ---- include = FALSE---------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
 
-## ----setup---------------------------------------------------------------
+## ----setup--------------------------------------------------------------------
 # Reading data
 library(foreign)
 
@@ -21,11 +21,11 @@ library(MNLpred)
 library(ggplot2)
 library(scales)
 
-## ----data----------------------------------------------------------------
+## ----data---------------------------------------------------------------------
 # The data:
 ml <- read.dta("https://stats.idre.ucla.edu/stat/data/hsbdemo.dta")
 
-## ----data_preparation----------------------------------------------------
+## ----data_preparation---------------------------------------------------------
 # Data preparation:
 
 # Set "academic" as the reference category for the multinomial model
@@ -34,19 +34,19 @@ ml$prog2 <- relevel(ml$prog, ref = "academic")
 # Computing a numeric dummy for "female" (= 1)
 ml$female2 <- as.numeric(ml$female == "female")
 
-## ----model---------------------------------------------------------------
+## ----model--------------------------------------------------------------------
 # Multinomial logit model:
 mod1 <- multinom(prog2 ~ female2 + read + write + math + science,
                  Hess = TRUE,
                  data = ml)
 
-## ----results-------------------------------------------------------------
+## ----results------------------------------------------------------------------
 summary(mod1)
 
-## ----math----------------------------------------------------------------
+## ----math---------------------------------------------------------------------
 summary(ml$math)
 
-## ----mnl_pred_ova--------------------------------------------------------
+## ----mnl_pred_ova-------------------------------------------------------------
 pred1 <- mnl_pred_ova(model = mod1,
                       data = ml,
                       xvari = "math",
@@ -55,10 +55,10 @@ pred1 <- mnl_pred_ova(model = mod1,
                       nsim = 100, # faster than the default 1000
                       probs = c(0.025, 0.975)) # default
 
-## ----return--------------------------------------------------------------
+## ----return-------------------------------------------------------------------
 pred1$plotdata %>% head()
 
-## ----prediction_plot1----------------------------------------------------
+## ----prediction_plot1---------------------------------------------------------
 ggplot(data = pred1$plotdata, aes(x = math, y = mean,
                                   ymin = lower, ymax = upper)) +
   geom_ribbon(alpha = 0.1) + # Confidence intervals
@@ -69,7 +69,7 @@ ggplot(data = pred1$plotdata, aes(x = math, y = mean,
   labs(y = "Predicted probabilities",
        x = "Math score") # Always label your axes ;)
 
-## ----static_fd-----------------------------------------------------------
+## ----static_fd----------------------------------------------------------------
 fdif1 <- mnl_fd2_ova(model = mod1,
                      data = ml,
                      xvari = "math",
@@ -77,7 +77,7 @@ fdif1 <- mnl_fd2_ova(model = mod1,
                      value2 = max(ml$math),
                      nsim = 100)
 
-## ----static_fd_plot------------------------------------------------------
+## ----static_fd_plot-----------------------------------------------------------
 ggplot(fdif1$plotdata_fd, aes(categories, y = mean,
                               ymin = lower, max = upper)) +
   geom_pointrange() +
@@ -86,7 +86,7 @@ ggplot(fdif1$plotdata_fd, aes(categories, y = mean,
                      name = "First difference") +
   theme_bw()
 
-## ----first_diffferences_prediction---------------------------------------
+## ----first_diffferences_prediction--------------------------------------------
 fdif1 <- mnl_fd_ova(model = mod1,
                     data = ml,
                     xvari = "math",
@@ -95,10 +95,10 @@ fdif1 <- mnl_fd_ova(model = mod1,
                     scenvalues = c(0,1),
                     nsim = 100)
 
-## ----fd_return-----------------------------------------------------------
+## ----fd_return----------------------------------------------------------------
 fdif1$plotdata %>% head()
 
-## ----prediction_plot2----------------------------------------------------
+## ----prediction_plot2---------------------------------------------------------
 pred_plotdat <- rbind(fdif1$Prediction1$plotdata,
                       fdif1$Prediction2$plotdata)
 
@@ -114,8 +114,8 @@ ggplot(data = pred_plotdat, aes(x = math, y = mean,
   labs(y = "Predicted probabilities",
        x = "Math score") # Always label your axes ;)
 
-## ----first_differences_plot----------------------------------------------
-ggplot(data = fdif1$plotdata, aes(x = math, y = mean,
+## ----first_differences_plot---------------------------------------------------
+ggplot(data = fdif1$plotdata_fd, aes(x = math, y = mean,
                                   ymin = lower, ymax = upper)) +
   geom_ribbon(alpha = 0.1) +
   geom_line() +

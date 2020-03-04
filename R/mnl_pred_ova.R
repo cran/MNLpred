@@ -51,7 +51,6 @@
 #'                      nsim = 1000)
 #' }
 #'
-#' @importFrom tibble tibble
 #' @importFrom stats coef na.omit quantile
 #' @importFrom MASS mvrnorm
 
@@ -122,6 +121,11 @@ mnl_pred_ova <- function(model,
 
   # Length of sequence
   nseq <- length(variation)
+
+  if (nseq == 1) {
+    stop("Please supply a dataset or a x-variable with variation")
+  }
+
   output[["nVariation"]] <- nseq
 
   # Names of variables in model (without the "list" character in the vector)
@@ -145,6 +149,11 @@ mnl_pred_ova <- function(model,
   # Choice categories of the dependent variable
   categories <- sort(unique(eval(parse(text = paste0("data$", dv)))))
   J <- length(categories)
+
+  if (J < 3) {
+    stop("Please supply a dataset with a dependent variable that has a sufficient number of outcomes (> 2)")
+  }
+
   output[["ChoiceCategories"]] <- categories
   output[["nChoices"]] <- J
 
@@ -248,19 +257,34 @@ mnl_pred_ova <- function(model,
 
   # Aggregate the simulations
   # Create tibble for plot
+  # if (is.null(scenvalue) == TRUE) {
+  #   plotdat <- tibble::tibble(iv = rep(variation, J),
+  #                             categories = rep(categories, each = length(variation)),
+  #                             mean = NA,
+  #                             lower = NA,
+  #                             upper = NA)
+  # } else {
+  #   plotdat <- tibble::tibble(iv = rep(variation, J),
+  #                             categories = rep(categories, each = length(variation)),
+  #                             scen = rep(scenvalue, each = length(categories)),
+  #                             mean = NA,
+  #                             lower = NA,
+  #                             upper = NA)
+  # }
+
   if (is.null(scenvalue) == TRUE) {
-    plotdat <- tibble::tibble(iv = rep(variation, J),
-                              categories = rep(categories, each = length(variation)),
-                              mean = NA,
-                              lower = NA,
-                              upper = NA)
+    plotdat <- data.frame(iv = rep(variation, J),
+                          categories = rep(categories, each = length(variation)),
+                          mean = NA,
+                          lower = NA,
+                          upper = NA)
   } else {
-    plotdat <- tibble::tibble(iv = rep(variation, J),
-                              categories = rep(categories, each = length(variation)),
-                              scen = rep(scenvalue, each = length(categories)),
-                              mean = NA,
-                              lower = NA,
-                              upper = NA)
+    plotdat <- data.frame(iv = rep(variation, J),
+                          categories = rep(categories, each = length(variation)),
+                          scen = rep(scenvalue, each = length(variation)),
+                          mean = NA,
+                          lower = NA,
+                          upper = NA)
   }
 
 
