@@ -29,29 +29,11 @@
 #'
 #' pred <- mnl_pred_ova(model = mod, data = dataset,
 #'                      xvari = "x1",
-#'                      nsim = 100)
+#'                      nsim = 10)
 #'
-#'
-#'
-#' \donttest{
-#' library(foreign)
-#' library(nnet)
-#' library(MASS)
-#'
-#' ml <- read.dta("https://stats.idre.ucla.edu/stat/data/hsbdemo.dta")
-#'
-#' ml$prog2 <- relevel(ml$prog, ref = "academic")
-#' ml$female2 <- as.numeric(ml$female == "female")
-#'
-#' mod1 <- multinom(prog2 ~ female2 + read + write + math + science,
-#'                  Hess = TRUE, data = ml)
-#'
-#' pred <- mnl_pred_ova(model = mod1, data = ml,
-#'                      xvari = "math", by = 1,
-#'                      nsim = 1000)
-#' }
 #'
 #' @importFrom stats coef na.omit quantile
+#' @importFrom utils setTxtProgressBar txtProgressBar
 #' @importFrom MASS mvrnorm
 
 
@@ -79,9 +61,25 @@ mnl_pred_ova <- function(model,
   }
 
   if (is.null(xvari) == TRUE | is.character(xvari) == FALSE) {
-    stop("Please supply a character of your x-variable of interest")
+    stop("Please supply a character string of your x-variable of interest")
   }
 
+  if (is.null(model$Hessian) == TRUE) {
+    stop("There is no Hessian matrix. Please specify Hess = TRUE in your multinom() call.")
+  }
+
+  # Names of variables in model (without the "list" character in the vector)
+  variables <- as.character(attr(model$terms, "variables"))[-1]
+
+  if(!(xvari %in% variables) == TRUE){
+    stop("x-variable is not an independent variable in the model. There might be a typo.")
+  }
+
+  if(is.null(scenname) == FALSE){
+    if (!(scenname %in% variables) == TRUE) {
+      stop("The scenario variable is not an independent variable in the model. There might be a typo.")
+    }
+  }
 
   # Create list that is returned in the end.
   output <- list()
@@ -127,9 +125,6 @@ mnl_pred_ova <- function(model,
   }
 
   output[["nVariation"]] <- nseq
-
-  # Names of variables in model (without the "list" character in the vector)
-  variables <- as.character(attr(model$terms, "variables"))[-1]
 
   # Name of independent variables
   iv <- variables[2:length(variables)]
@@ -220,6 +215,12 @@ mnl_pred_ova <- function(model,
   # Prepare array of observed values:
   ovaV <- array(NA, c(obs, nsim, nseq, J))
 
+  # Add progress bar
+  pb_multiplication <- txtProgressBar(min = 0, max = nseq, initial = 0)
+
+  # Loop over all scenarios
+  cat("Multiplying values with simulated estimates:\n")
+
   # Loop over all scenarios
   for(i in 1:nseq){
     ovaV[, , i, 1] <- apply(matrix(0,
@@ -236,6 +237,9 @@ mnl_pred_ova <- function(model,
                                      "], 1, function(s) ovacases[,, i] %*% s)"))
       eval(element)
     }
+
+    # Progress bar:
+    setTxtProgressBar(pb_multiplication, i)
   }
 
   # Multinomial link function:
@@ -247,10 +251,19 @@ mnl_pred_ova <- function(model,
   P <- array(NA, c(nsim, J, nseq))
 
   # 2. Part: take the exponent and divide through the sum of all (Sexp)
+  # Add progress bar
+  pb_link <- txtProgressBar(min = 0, max = nseq, initial = 0)
+
+  # Loop over all scenarios
+  cat("\nApplying link function:\n")
+
   for (l in 1:nseq) {
     for (m in 1:J) {
       P[, m, l] <- apply(exp(ovaV[, , l, m])/Sexp[, , l], 2, mean)
     }
+
+    # Progress bar:
+    setTxtProgressBar(pb_link, l)
   }
 
   output[["P"]] <- P
@@ -291,6 +304,7 @@ mnl_pred_ova <- function(model,
 
   # Aggregate
   start <- 1
+
   for (i in 1:J) {
     end <- i*length(variation)
     plotdat[c(start:end), "mean"] <- apply(P[, i,], 2, mean)
@@ -309,6 +323,8 @@ mnl_pred_ova <- function(model,
 
   # Put the data in the output
   output[["plotdata"]] <- plotdat
+
+  cat("\nDone!\n\n")
 
   return(output)
 }

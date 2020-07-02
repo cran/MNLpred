@@ -36,25 +36,8 @@
 #'
 #' fdif <- mnl_fd_ova(model = mod, data = dataset,
 #'                    xvari = "x1", scenname = "x3",
-#'                    scenvalues = c(min(dataset$x3), max(dataset$x3)))
-#'
-#' \donttest{
-#' library(foreign)
-#' library(nnet)
-#' library(MASS)
-#'
-#' ml <- read.dta("https://stats.idre.ucla.edu/stat/data/hsbdemo.dta")
-#'
-#' ml$prog2 <- relevel(ml$prog, ref = "academic")
-#' ml$female2 <- as.numeric(ml$female == "female")
-#'
-#' mod1 <- multinom(prog2 ~ female2 + read + write + math + science,
-#'                  Hess = TRUE, data = ml)
-#'
-#' fdif <- mnl_fd_ova(model = mod1, data = ml, xvari = "math", by = 1,
-#'                    scenname = "female2", scenvalues = c(0,1),
-#'                    nsim = 1000)
-#' }
+#'                    scenvalues = c(min(dataset$x3), max(dataset$x3)),
+#'                    nsim = 10)
 #'
 
 mnl_fd_ova <- function(model,
@@ -102,6 +85,8 @@ mnl_fd_ova <- function(model,
   }
 
   # Predictions for first scenario
+  cat("First scenario:\n")
+
   pred1 <- mnl_pred_ova(model = model,
                         data = data,
                         xvari = xvari,
@@ -112,6 +97,8 @@ mnl_fd_ova <- function(model,
   output[["Prediction1"]] <- pred1
 
   # Predictions for second scenario
+  cat("Second scenario:\n")
+
   pred2 <- mnl_pred_ova(model = model,
                         data = data,
                         xvari = xvari,
@@ -119,7 +106,6 @@ mnl_fd_ova <- function(model,
                         scenvalue = scenvalues[2],
                         by = by, nsim = nsim, seed = seed,
                         probs = probs)
-
   output[["Prediction2"]] <- pred2
 
   plotdat <- rbind(pred1$plotdata,
