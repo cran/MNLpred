@@ -75,11 +75,17 @@ mnl_pred_ova <- function(model,
     stop("x-variable is not an independent variable in the model. There might be a typo.")
   }
 
+  # Check if scenario is supplied correctly
+  if (is.null(scenname) == FALSE & is.character(scenname) == FALSE) {
+    stop("Please supply a character string of your scenario of interest")
+  }
+
   if(is.null(scenname) == FALSE){
     if (!(scenname %in% variables) == TRUE) {
       stop("The scenario variable is not an independent variable in the model. There might be a typo.")
     }
   }
+
 
   # Create list that is returned in the end.
   output <- list()
@@ -105,14 +111,16 @@ mnl_pred_ova <- function(model,
   S <- mvrnorm(nsim, mu, varcov)
   output[["S"]] <- S
 
-  # Artificial variation ov independent variable of interest
+  # Artificial variation of independent variable of interest (x)
   if (is.null(by) == TRUE) {
     by <- abs(min(eval(parse(text = paste0("data$", xvari))), na.rm = TRUE) -
       max(eval(parse(text = paste0("data$", xvari))), na.rm = TRUE))
   }
 
-  variation <- seq(from = min(eval(parse(text = paste0("data$", xvari))), na.rm = TRUE),
-                   to = max(eval(parse(text = paste0("data$", xvari))), na.rm = TRUE),
+  variation <- seq(from = min(eval(parse(text = paste0("data$", xvari))),
+                              na.rm = TRUE),
+                   to = max(eval(parse(text = paste0("data$", xvari))),
+                            na.rm = TRUE),
                    by = by)
 
   output[["Variation"]] <- variation
@@ -129,6 +137,11 @@ mnl_pred_ova <- function(model,
   # Name of independent variables
   iv <- variables[2:length(variables)]
   output[["IV"]] <- iv
+
+  # Variables have to be numeric
+  if (sum(apply(data[, iv], 2, class) %in% c("numeric", "integer")) < ncol(data[, iv])) {
+    stop("Please supply data that consists of numeric values. The package can not handle factor or character variables, yet. For workarounds, please take a look at the github issues (https://github.com/ManuelNeumann/MNLpred/issues/1). The problem will be fixed with the 0.1.0 release.")
+  }
 
   # Name of dependent variable
   dv <- variables[1]
@@ -225,7 +238,9 @@ mnl_pred_ova <- function(model,
   for(i in 1:nseq){
     ovaV[, , i, 1] <- apply(matrix(0,
                                    nrow = nsim,
-                                   ncol = ncol(X)), 1, function(s) ovacases[, , i] %*% s)
+                                   ncol = ncol(X)),
+                            1,
+                            function(s) ovacases[, , i] %*% s)
     # ^ This will be zero because of the baseline category  ^
 
     # For each choice, the cases will now be multiplied with the simulated estimates
@@ -233,7 +248,9 @@ mnl_pred_ova <- function(model,
       coefstart <- (k-2)*ncoef+1
       coefend <- (k-1)*ncoef
       element <- parse(text = paste0("ovaV[,, i,", k, "] <- apply(S[, ",
-                                     coefstart, ":", coefend,
+                                     coefstart,
+                                     ":",
+                                     coefend,
                                      "], 1, function(s) ovacases[,, i] %*% s)"))
       eval(element)
     }
