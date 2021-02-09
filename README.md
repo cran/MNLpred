@@ -7,11 +7,11 @@
 
 [![GPLv3
 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://perso.crans.org/besson/LICENSE.html)
-[![Travis build
-status](https://travis-ci.org/ManuelNeumann/MNLpred.svg?branch=master)](https://travis-ci.org/ManuelNeumann/MNLpred)
 [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/MNLpred)](https://cran.r-project.org/package=MNLpred)
 [![downloads](https://cranlogs.r-pkg.org/badges/MNLpred)](https://www.r-pkg.org/badges/version/MNLpred)
 [![total\_downloads](https://cranlogs.r-pkg.org/badges/grand-total/MNLpred)](https://www.r-pkg.org/badges/version/MNLpred)
+[![R build
+status](https://github.com/ManuelNeumann/MNLpred/workflows/R-CMD-check/badge.svg)](https://github.com/ManuelNeumann/MNLpred/actions)
 <!-- badges: end -->
 
 This package provides functions that make it easy to get plottable
@@ -34,13 +34,13 @@ file, this is not the place to write comprehensively about it.
 
 These are the important characteristics of the model:
 
-  - The multinomial logit regression is used to model nominal outcomes.
+-   The multinomial logit regression is used to model nominal outcomes.
     It provides the opportunity to assign specific choices a
     probability, based on a set of independent variables.
-  - The model needs an assigned baseline category to be identifiable.
+-   The model needs an assigned baseline category to be identifiable.
     All other choices are evaluated in contrast to this reference.
-  - The model returns a set of coefficients for each choice category.
-  - Like all logit models, the multinomial logit model returns log-odds
+-   The model returns a set of coefficients for each choice category.
+-   Like all logit models, the multinomial logit model returns log-odds
     which are difficult to interpret in terms of effect sizes and
     uncertainties.
 
@@ -234,26 +234,27 @@ summary(gles$egoposition_immigration)
 
 As we can see, the ego positions were recorded on a scale from 0 to 10.
 Higher numbers represent more restrictive positions. We pick this score
-as the x-variable (`xvari`) and use the `mnl_pred_ova()` function to get
+as the x-variable (`x`) and use the `mnl_pred_ova()` function to get
 predicted probabilities for each position in this range.
 
 The function needs a multinomial logit model (`model`), data (`data`),
-the variable of interest `xvari`, the steps for which the probabilities
+the variable of interest `x`, the steps for which the probabilities
 should be predicted (`by`). Additionally, a `seed` can be defined for
 replication purposes, the numbers of simulations can be defined
 (`nsim`), and the confidence intervals (`probs`).
 
 If we want to hold another variable stable, we can specify so with
-`scennname`and `scenvalue`. See also the `mnl_fd_ova()` function below.
+`z`and `z_value`. See also the `mnl_fd_ova()` function below.
 
 ``` r
 pred1 <- mnl_pred_ova(model = mod1,
                       data = gles,
-                      xvari = "egoposition_immigration",
+                      x = "egoposition_immigration",
                       by = 1,
                       seed = "random", # default
                       nsim = 100, # faster
                       probs = c(0.025, 0.975)) # default
+#> Warning: The argument xvari is deprecated; please use x instead.
 #> Multiplying values with simulated estimates:
 #> ================================================================================
 #> Applying link function:
@@ -267,12 +268,12 @@ returns a `plotdata` data set:
 ``` r
 pred1$plotdata %>% head()
 #>   egoposition_immigration vote        mean        lower       upper
-#> 1                       0  AfD 0.002280170 0.0008558598 0.005491734
-#> 2                       1  AfD 0.004375939 0.0018961206 0.009450405
-#> 3                       2  AfD 0.008229726 0.0041619617 0.016110250
-#> 4                       3  AfD 0.015121617 0.0088159160 0.027347834
-#> 5                       4  AfD 0.027047128 0.0178399439 0.044993868
-#> 6                       5  AfD 0.046869060 0.0344841912 0.070355686
+#> 1                       0  AfD 0.002574547 0.0008574365 0.005269062
+#> 2                       1  AfD 0.004858778 0.0019021238 0.009025602
+#> 3                       2  AfD 0.008979284 0.0040742059 0.015737725
+#> 4                       3  AfD 0.016200141 0.0085063523 0.026138105
+#> 5                       4  AfD 0.028434851 0.0172336365 0.040839788
+#> 6                       5  AfD 0.048346279 0.0332185247 0.064579199
 ```
 
 As we can see, it includes the range of the x variable, a mean, a lower,
@@ -309,10 +310,11 @@ position oneself on the most tolerant or most restrictive end of the
 ``` r
 fdif1 <- mnl_fd2_ova(model = mod1,
                      data = gles,
-                     xvari = "egoposition_immigration",
+                     x = "egoposition_immigration",
                      value1 = min(gles$egoposition_immigration),
                      value2 = max(gles$egoposition_immigration),
                      nsim = 100)
+#> Warning: The argument xvari is deprecated; please use x instead.
 #> Multiplying values with simulated estimates:
 #> ================================================================================
 #> Applying link function:
@@ -344,18 +346,21 @@ vote decision over the different ego-positions. With the `mnl_fd_ova()`
 function, we can predict the probabilities for two scenarios and
 subtract them. The function returns the differences and the confidence
 intervals of the differences. The different scenarios can be held stable
-with `scenname` and the `scenvalues`. `scenvalues` takes a vector of two
-numeric values. These values are held stable for the variable that is
-named in `scenname`.
+with `z` and the `z_values`. `z_values` takes a vector of two numeric
+values. These values are held stable for the variable that is named in
+`z`.
 
 ``` r
 fdif2 <- mnl_fd_ova(model = mod1,
                     data = gles,
-                    xvari = "egoposition_immigration",
+                    x = "egoposition_immigration",
                     by = 1,
-                    scenname = "gender",
-                    scenvalues = c(0,1),
+                    z = "gender",
+                    z_values = c(0,1),
                     nsim = 100)
+#> Warning: The argument xvari is deprecated; please use x instead.
+#> Warning: The argument scenname is deprecated; please use z instead.
+#> Warning: The argument scenvalues is deprecated; please use z_values instead.
 #> First scenario:
 #> Multiplying values with simulated estimates:
 #> ================================================================================
@@ -376,13 +381,13 @@ used to plot the differences.
 
 ``` r
 fdif2$plotdata_fd %>% head()
-#>   egoposition_immigration vote         mean        lower        upper
-#> 1                       0  AfD -0.003090183 -0.006936944 -0.001006274
-#> 2                       1  AfD -0.005810533 -0.011890347 -0.002198163
-#> 3                       2  AfD -0.010675364 -0.020070808 -0.004674165
-#> 4                       3  AfD -0.019088597 -0.033123068 -0.009552083
-#> 5                       4  AfD -0.033055017 -0.052620717 -0.018523845
-#> 6                       5  AfD -0.055067265 -0.081466477 -0.034462678
+#>   egoposition_immigration vote         mean        lower         upper
+#> 1                       0  AfD -0.003129881 -0.006782947 -0.0009810147
+#> 2                       1  AfD -0.005879401 -0.011921863 -0.0021165459
+#> 3                       2  AfD -0.010785318 -0.020425260 -0.0045423940
+#> 4                       3  AfD -0.019243999 -0.034364021 -0.0090925282
+#> 5                       4  AfD -0.033227369 -0.055568701 -0.0168962111
+#> 6                       5  AfD -0.055135529 -0.086503541 -0.0293905629
 ```
 
 Since the function calls the `mnl_pred_ova()` function internally, it
@@ -458,16 +463,16 @@ scenarios and their first differences.
 My code is inspired by the method courses in the [Political Science
 master’s program at the University of
 Mannheim](https://www.sowi.uni-mannheim.de/en/academics/prospective-students/ma-in-political-science/)(cool
-place, check it out\!). The skeleton of the code is based on a tutorial
+place, check it out!). The skeleton of the code is based on a tutorial
 taught by [Marcel Neunhoeffer](https://www.marcel-neunhoeffer.com/)
 (lecture: “Advanced Quantitative Methods” by [Thomas
 Gschwend](https://www.sowi.uni-mannheim.de/gschwend/)).
 
 ## References
 
-<div id="refs" class="references hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent">
 
-<div id="ref-hanmer2013">
+<div id="ref-hanmer2013" class="csl-entry">
 
 Hanmer, Michael J., and Kerem Ozan Kalkan. 2013. “Behind the Curve:
 Clarifying the Best Approach to Calculating Predicted Probabilities and
@@ -477,7 +482,7 @@ Journal of Political Science* 57 (1): 263–77.
 
 </div>
 
-<div id="ref-king2000">
+<div id="ref-king2000" class="csl-entry">
 
 King, Gary, Michael Tomz, and Jason Wittenberg. 2000. “Making the Most
 of Statistical Analyses: Improving Interpretation and Presentation.”
@@ -486,7 +491,7 @@ of Statistical Analyses: Improving Interpretation and Presentation.”
 
 </div>
 
-<div id="ref-rosteutscher2019">
+<div id="ref-rosteutscher2019" class="csl-entry">
 
 Roßteutscher, Sigrid, Harald Schoen, Rüdiger Schmitt-Beck, Christof
 Wolf, and Alexander Staudt. 2019. “Rolling Cross-Section-Wahlkampfstudie

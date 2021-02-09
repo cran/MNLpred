@@ -1,6 +1,6 @@
 Package: MNLpred
 Title: Simulated Predicted Probabilities for Multinomial Logit Models
-Version: 0.0.4
+Version: 0.0.5
 Authors@R: 
     person(given = "Manuel",
            family = "Neumann",
@@ -19,13 +19,13 @@ Description: Functions to easily return simulated predicted probabilities and
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Suggests: knitr, rmarkdown, testthat, nnet, magrittr, ggplot2, scales
 VignetteBuilder: knitr
 Imports: MASS, stats
 NeedsCompilation: no
-Packaged: 2020-09-01 13:16:52 UTC; mn94
+Packaged: 2021-02-09 14:27:26 UTC; homeoffice
 Author: Manuel Neumann [aut, cre] (<https://orcid.org/0000-0002-7953-3939>)
 Maintainer: Manuel Neumann <manuel.neumann@mzes.uni-mannheim.de>
 Repository: CRAN
-Date/Publication: 2020-09-02 06:50:43 UTC
+Date/Publication: 2021-02-09 17:10:10 UTC

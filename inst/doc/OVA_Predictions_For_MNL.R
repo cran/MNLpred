@@ -38,7 +38,7 @@ summary(gles$egoposition_immigration)
 ## ----mnl_pred_ova-------------------------------------------------------------
 pred1 <- mnl_pred_ova(model = mod1,
                       data = gles,
-                      xvari = "egoposition_immigration",
+                      x = "egoposition_immigration",
                       by = 1,
                       seed = "random", # default
                       nsim = 100, # faster
@@ -63,7 +63,7 @@ ggplot(data = pred1$plotdata, aes(x = egoposition_immigration,
 ## ----static_fd----------------------------------------------------------------
 fdif1 <- mnl_fd2_ova(model = mod1,
                      data = gles,
-                     xvari = "egoposition_immigration",
+                     x = "egoposition_immigration",
                      value1 = min(gles$egoposition_immigration),
                      value2 = max(gles$egoposition_immigration),
                      nsim = 100)
@@ -82,10 +82,10 @@ ggplot(fdif1$plotdata_fd, aes(x = categories,
 ## ----first_diffferences_prediction--------------------------------------------
 fdif2 <- mnl_fd_ova(model = mod1,
                     data = gles,
-                    xvari = "egoposition_immigration",
+                    x = "egoposition_immigration",
                     by = 1,
-                    scenname = "gender",
-                    scenvalues = c(0,1),
+                    z = "gender",
+                    z_values = c(0,1),
                     nsim = 100)
 
 ## ----fd_return----------------------------------------------------------------
